@@ -30,4 +30,4 @@ const UserSchema = new Schema({
 });
 
 //This exports a handle or pointer(connection) to the 'users' table in mongoDB
-module.exports = UserCollection = mongoose.model('users', UserSchema)
+module.exports = User = mongoose.model('users', UserSchema)
