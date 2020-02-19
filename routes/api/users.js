@@ -1,21 +1,23 @@
 const express = require('express');
-const User = require('../../models/UserModel');
+const User = require('../../models/User');
 const router = express.Router();
+
+//passport for verifying the token
+const passport= require('passport');
+
 
 //for token generation
 const keys = require('../../config/keys');
 const jwt = require('jsonwebtoken');
 
-//React will convert the HTML into JSON(Key:Value)
-router.get('/test', (req, res) => res.json({
-    msg: 'users api works!'
-}));
-
-//Installed gravatar library & use it for avatar images
+//Install gravatar library & use it for avatar images
 const gravatar = require('gravatar');
 
 //Password Hashing using bcrypt library
 const bcrypt = require('bcryptjs');
+
+// Load input validation
+const validateRegisterInput = require('../../validation/register');
 
 //RouteNo   1
 // @route   POST api/users/register
@@ -23,6 +25,12 @@ const bcrypt = require('bcryptjs');
 // @access  Public
 
 router.post('/register', (req, res) => {
+const {errors, isValid} = validateRegisterInput(req.body);
+
+//Check Validation
+if (!isValid){
+    return res.status(400).json(errors);
+}
     User.findOne({email: req.body.email})
         .then(user =>{
             if (user) {
@@ -50,7 +58,8 @@ router.post('/register', (req, res) => {
                         if (err) throw err;
                         newUser.password = hash;
 
-                        newUser.save()
+                        newUser
+                        .save()
                         .then(user => res.json(user))
                         .catch(err => console.log(err));
                     });
@@ -62,7 +71,7 @@ router.post('/register', (req, res) => {
 
 //RouteNo   2
 // @route  POST api/users/login
-// @desc    login user
+// @desc    login user / Returning JWT token
 // @access  Public
 router.post('/login', (req, res) => {
 
@@ -82,7 +91,7 @@ router.post('/login', (req, res) => {
                     if (isMatch) {
                         //create Payload
                         const Payload = {
-                            id: user.id, name: user.id, avatar: user.avatar
+                            id: user.id, name: user.name, avatar: user.avatar
                         };
 
                         //sign token
@@ -103,6 +112,17 @@ router.post('/login', (req, res) => {
                 })
         })
         .catch(err => console.log('Error while User.findOne: ' + err));
+});
+
+//RouteNo   3
+// @route  GET api/users/current
+// @desc    return current user
+// @access  Private
+
+router.get('/current',
+passport.authenticate('jwt', {session : false}),
+(req, res) => {
+  res.json({msg: 'Success!'})  
 });
 
 module.exports = router;
