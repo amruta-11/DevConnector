@@ -18,6 +18,7 @@ const bcrypt = require('bcryptjs');
 
 // Load input validation
 const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
 
 //RouteNo   1
 // @route   POST api/users/register
@@ -78,7 +79,11 @@ router.post('/login', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    //Finfing user by email
+    const { errors, isValid } = validateLoginInput(req.body);   
+    if (!isValid) {
+      return res.status(400).json(errors);
+
+    //Finding user by email
     User.findOne({email})
         .then(user => {
             if(!user){
@@ -112,7 +117,9 @@ router.post('/login', (req, res) => {
                 })
         })
         .catch(err => console.log('Error while User.findOne: ' + err));
-});
+}
+}
+);
 
 //RouteNo   3
 // @route  GET api/users/current
