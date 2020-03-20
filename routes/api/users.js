@@ -82,7 +82,7 @@ router.post('/login', (req, res) => {
     const { errors, isValid } = validateLoginInput(req.body);   
     if (!isValid) {
       return res.status(400).json(errors);
-
+    }
     //Finding user by email
     User.findOne({email})
         .then(user => {
@@ -117,7 +117,7 @@ router.post('/login', (req, res) => {
                 })
         })
         .catch(err => console.log('Error while User.findOne: ' + err));
-}
+
 }
 );
 

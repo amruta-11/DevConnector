@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import classnames from 'classnames';
+import {registerUser} from '../../actions/authActions';
+import PropTypes from 'prop-types';
+
 
 class Register extends Component {
   constructor(){
@@ -30,25 +34,29 @@ class Register extends Component {
       password2: this.state.password2
     };
 
-    axios
-      .post('/api/users/register', newUser)
-      .then(res => console.log(res.data))
-      .catch(err => this.setState({errors: err.response.data}));
-  }
+    this.props.registerUser(newUser, this.props.history);
+}
 
+//Alternative for const {errors} = this.props.errors
+componentWillReceiveProps(nextProps){
+  if(nextProps.errors){
+    this.setState({errors: nextProps.errors})
+  }
+}
 
     render() {
       const {errors} = this.state;
+      const {user} = this.props.auth;
         return (
             <div className="register">
+              {user? user.name : null}
             <div className="container">
               <div className="row">
                 <div className="col-md-8 m-auto">
                   <h1 className="display-4 text-center">Sign Up</h1>
                   <p className="lead text-center">Create your DevConnector account</p>
                   <form noValidate onSubmit={this.onSubmit}>
-                    <div className="form-group">
-                    
+                    <div className="form-group">                    
                       <input 
                         type="text" 
                         className={classnames("form-control form-control-lg", {
@@ -63,8 +71,6 @@ class Register extends Component {
                         <div className="invalid-feedback">{errors.name}</div>
                       )}
                     </div>
-                    
-
         
         
                     <div className="form-group">
@@ -130,5 +136,22 @@ class Register extends Component {
     }
 }
 
+//Here we are making clear that to load the Register Component in the UI we will need 'registerUser' function & 'auth' object
+Register.propTypes = {
+  registerUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+}
 
-export default Register;
+
+//Connecting the UI to the store to get the data back from store & display in UI like the username etc
+const mapStateToProps = (state) => ({
+  //Bringing the state down & attatching to the component.
+  //this.props.auth will have the user data
+  auth: state.auth,
+  errors: state.errors
+})
+
+
+//Connecting Register component to talk to the actions
+//Register Component now knows what to do to get something into the UI & to get something out of the UI(store)
+export default connect(mapStateToProps, {registerUser})(withRouter(Register));
