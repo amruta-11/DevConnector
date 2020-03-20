@@ -37,7 +37,7 @@ class Register extends Component {
     this.props.registerUser(newUser, this.props.history);
 }
 
-//Alternative for const {errors} = this.props.errors
+// //Alternative for const {errors} = this.props;
 componentWillReceiveProps(nextProps){
   if(nextProps.errors){
     this.setState({errors: nextProps.errors})
