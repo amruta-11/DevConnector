@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import {connect} from 'react-redux';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import {loginUser} from '../../actions/authActions';
-
-
 
 class Login extends Component {
   constructor(){

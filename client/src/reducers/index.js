@@ -1,11 +1,12 @@
-//It will allow you to combine multiple reducers & pass it as a single to store
-import {combineReducers} from 'redux';
-//Import all reducer file
+import { combineReducers } from 'redux';
 import authReducer from './authReducer';
 import errorReducer from './errorReducer';
-
+import profileReducer from './profileReducer';
+import postReducer from './postReducer';
 
 export default combineReducers({
-    auth: authReducer,
-    errors: errorReducer
-})
+  auth: authReducer,
+  errors: errorReducer,
+  profile: profileReducer,
+  post: postReducer
+});

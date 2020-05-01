@@ -17,8 +17,6 @@ export const registerUser = (userData, history) => dispatch => {
                 payload: err.response.data
             }
         ));
-        
-
 }
 
 //Action - Login User - Needs to get the user token
@@ -56,7 +54,16 @@ export const loginUser = userData => dispatch => {
 }
 
 
-
-
-
+//Log user out
+export const logoutUser = () => dispatch => {
+    // Remove token from localStorage
+    localStorage.removeItem('jwtToken');
+    // Remove auth header for future requests
+    setAuthToken(false);
+    // Remove from redux store
+    dispatch({
+        type: SET_CURRENT_USER,
+        payload: {}
+    })
+  };
 
